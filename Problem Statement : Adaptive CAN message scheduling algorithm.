@@ -1,0 +1,49 @@
+P Thirumeni.  203085002 – IITDH
+
+Inputs: Adaptive CAN message scheduling algorithm.
+
+Heuristic – I :
+
+1)	The 29 bit CAB2.0B arbitration field is to be segmented to accommodate the dynamic nature of ID allocation, and a part of the field shall be fixed to reflect ID and remain to be manipulated using the adaptive algorithm to, adjust the message priority.
+
+2)	Evaluate the average length of the message frame in the waiting state and its corresponding time for transmission for each CAN node.
+3)	Determine the message with the maximum transmission time in every CAN node.
+4)	The master node should consolidate all the values of these maximum transmission times and average transmission times periodically (data received from the other nodes).
+5)	Then, a network average and the network maximum transmission time shall be arrived. Let these be called Tmax, Tavg.
+
+6)	Each node shall compare and evaluate, the first message in its queue, to ascertain the deadline limit.
+
+For example, the if Tmax = 200ms, and Tavg=126ms. For the network, and if the first message ready for transmission in the CAN Node has an estimated time of transmission 117ms, then this node can conclude its message has the shortest Tx time, this info may be used to determine the earliest deadline first.
+
+7)	Priority point of such node with lesser Tx time may be increased if the shortest message can be allowed to transmit, however, other parameters like type of message (real-time or nonrealtime), manual priority allocated and nature of periodicity ( periodic, aperiodic or sporadic.) etc will be considered, the concept of priority point will take these factors as inputs.
+ 
+8)	Priority Progression Mechanism:  If the given node if starved continuously from transmitting a particular message, for a longer period of time due to higher priority messages and the message type being non real time, then based on the “denial count”, the priory point can be incremented to improvise the chance for transmission. 
+
+9)	Therefore, a history table detailing the time or number of transmissions that happened from the last successful transmission of this message and number of, out of turn transmission the message and the node taken. 
+
+10)	Failure to transmit: If a node fails to transmit a particular message or any message due to faulty conditions, a fault counter with the delay/ failure caused and frequency of such fault shall be recorded in the history and appropriate decrement in the priority point shall be reflected , so that later failure instances and bus time wastage can be avoided.
+
+11)	The master node shall send query packets at periodic intervals and during bus idle time, to evaluate the hardware faults in the network. If the break in network is sensed by the absence of return ack. Message from node the network speed may be adjusted to check such adjustments improvise and brings the node to action. (details in hardware fault studies.)
+
+12)	Priority points are inputs to the algorithm which will determine a final priority rank, and this will be allocated as the message ID of a particular message in a particular node, this ID is not permanent and will be reviewed and updated when the performance reduces or the network dynamics changes.
+
+13)	There are multiple inputs to the priory allocation algorithm these are called priority point, these are defined as below.
+
+14)	If a particular node is transmitting a message with high priority at higher frequency and this causes starvation of other nodes and messages, the priority of the message to be decremented based on the rate of transmission and bus utilisation rate and bus utilisation time ( idle bus time or busy time).
+
+
+15)	Weightage mechanism to be incorporated to give weights to waiting time of the node and waiting time of the message in that node, the combined value of these weightage will also be used to decide, the message ID promotion, the recently transmitted node will have less weightage so that other nodes in waiting will have fair chance, however a realtime critical message will override this arrangement.
+
+16)	We can try two different ques for critical and non critical messages at first and the empty critical que/slack time of the critical messages shall be used by the non critical message and any interrupt during its transmission shall be recorded as a reference marker, so that next time such override can be avoided.
+
+17)	Each Node will maintain a transaction denial counter, if the value is breaches the threshold set by the network design, then the node is allowed to mark an increment in a special set of priority promotion bits, in its message ID field, from 1 to 0 since 2 bits are available the counter will be initialised with “11” and will count down to 11-10-01-00, after a 4 layer of denial counter breach the node will have a 1 bit fair chance improvement in the ID field.
+
+18)	The threshold value for the above counter can be set differently if a node has mixed basket of real time and non real time messages, than if the ratio of the type and total count of the message originating from this node will be used to decide the threshold.
+
+For example if the Node has 20 message IDs associated and all of the are critical then the threshold can be set by n/20 where n is the total message count in the network, if n=180 then the threshold will be 180/20=9, so for every 9 misses or denial of transmission attempt the denial counter will be decremented by 1, after 4 such decrements 4 x 9 = 36 denials the node will be allowed to modify its message id temporarily to the lowest  ID value ( highest priority) to send make its message out, once this message is passed successfully without error the node will normalise this priority modification to its earlier state.
+
+This is an initial intuition, a better mechanism to calculate the threshold value to be  researched and arrived at after network  simulations with real time non real time and periodic aperiodic tasks and learning from the experimental data.
+
+
+
+
